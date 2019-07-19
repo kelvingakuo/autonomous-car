@@ -1,0 +1,7 @@
+numpy
+pygame
+nanpy
+imgaug
+keras
+opencv-python
+tensorflow

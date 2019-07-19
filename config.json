@@ -1,0 +1,48 @@
+{
+	"pc":{
+		"pc_ip": "192.168.88.26",
+		"pc_port": 5500
+	},
+
+	"leds":{
+		"boot_led": 21,
+		"sixaxis_connected_led": 24,
+		"ask_to_connect_server": 23
+	},
+
+	"motor":{
+		"pin_7": 4,
+		"pin_2": 27,
+		"pin_1": 22
+	},
+
+	"arduino_digital_pins":{
+		"ultrasonic_echo": 7,
+		"ultrasonic_trig": 9,
+		"car_servo": 6,
+		"pan_servo": 2,
+		"tilt_servo": 4
+	},
+
+	"camera_callibration":{
+		"K": "np.array([[825.0592249883855, 0.0, 1295.5], [0.0, 825.0592249883855, 971.5], [0.0, 0.0, 1.0]])",
+		"D": "np.array([[0.0], [0.0], [0.0], [0.0]])",
+		"DIM": "(2592L, 1944L)",
+		"ay": 1592.71657074,
+		"u0": 1047.95798731,
+		"v0": 464.730846962
+	},
+
+	"servo_angles":{
+		"car_left": 10,
+		"car_mid": 67,
+		"car_right": 110,
+		"pan_left": 140,
+		"pan_mid": 75,
+		"pan_right": 0,
+		"pan_car_swerve_right": 28,
+		"pan_car_swerve_left": 140
+	}
+
+
+}

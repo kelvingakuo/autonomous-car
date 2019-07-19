@@ -1,0 +1,14 @@
+**/*.pyc
+**/__pycache__
+**/*.jpg
+**/*.png
+**/*.xml
+**/*.log
+**/*.record
+**/*.csv
+**/*.zip
+**/*.ppk
+**/*.exe
+**/*.pem
+computer/models/training_data
+computer/models/model_definitions/object_detection/relevant_scripts/object_detection
