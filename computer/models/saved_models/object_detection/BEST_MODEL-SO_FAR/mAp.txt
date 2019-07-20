@@ -1,0 +1,50 @@
+INFO:tensorflow:Losses/Loss/classification_loss: 7.163171
+INFO:tensorflow:Losses/Loss/classification_loss: 7.163171
+INFO:tensorflow:Losses/Loss/localization_loss: 2.444633
+INFO:tensorflow:Losses/Loss/localization_loss: 2.444633
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/120kph: 0.142536
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/120kph: 0.142536
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/50kph: 0.276061
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/50kph: 0.276061
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/car: 0.546822
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/car: 0.546822
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/forward: 0.619885
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/forward: 0.619885
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/no_left: 0.307834
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/no_left: 0.307834
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/no_right: 0.342841
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/no_right: 0.342841
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/person: 0.965430
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/person: 0.965430
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/stop: 0.645294
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/stop: 0.645294
+INFO:tensorflow:PascalBoxes_Precision/mAP@0.5IOU: 0.480838
+INFO:tensorflow:PascalBoxes_Precision/mAP@0.5IOU: 0.480838
+
+
+
+
+INFO:tensorflow:Writing metrics to tf summary.
+INFO:tensorflow:Writing metrics to tf summary.
+INFO:tensorflow:Losses/Loss/classification_loss: 6.192533
+INFO:tensorflow:Losses/Loss/classification_loss: 6.192533
+INFO:tensorflow:Losses/Loss/localization_loss: 2.254190
+INFO:tensorflow:Losses/Loss/localization_loss: 2.254190
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/120kph: 0.211023
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/120kph: 0.211023
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/50kph: 0.356591
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/50kph: 0.356591
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/car: 0.613380
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/car: 0.613380
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/forward: 0.623358
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/forward: 0.623358
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/no_left: 0.392931
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/no_left: 0.392931
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/no_right: 0.423223
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/no_right: 0.423223
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/person: 0.911074
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/person: 0.911074
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/stop: 0.679484
+INFO:tensorflow:PascalBoxes_PerformanceByCategory/AP@0.5IOU/stop: 0.679484
+INFO:tensorflow:PascalBoxes_Precision/mAP@0.5IOU: 0.526383
+INFO:tensorflow:PascalBoxes_Precision/mAP@0.5IOU: 0.526383
