@@ -8,6 +8,7 @@ import struct
 import sys
 import time
 import multiprocessing
+from subprocess import call
 
 from picamera import PiCamera
 
@@ -35,6 +36,7 @@ def godMode():
 							if(elapsedTime <= 2):
 								cam.close()
 								logger.error("WAS DRIVING, THE DUDE SHUT US DOWN. WE GIF UP!!!")
+								call("sudo killall python", shell = True)
 								sys.exit()
 							else:
 								pressedOnce = False
@@ -43,7 +45,7 @@ def godMode():
 							pressedOnce = True
 							firstTimePress = time.time()
 
-def driveTheSelf(motor, servo):
+def driveTheSelf(motor, servo, cam):
 	""" 
 	** Conn to relevant server
 	1. Find obstacle ahead
@@ -53,18 +55,13 @@ def driveTheSelf(motor, servo):
 	"""
 	# Init a bunch of things
 	client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	client.connect(("ec2-18-222-24-206.us-east-2.compute.amazonaws.com", 6666))
+	client.connect(("ec2-3-15-24-217.us-east-2.compute.amazonaws.com", 6666))
 	conn = client.makefile('wb')
 
 	try:
 		carCentre = 58
 		carLeft = 95
 		carRight = 15
-
-		cam = PiCamera()
-		cam.resolution = (300, 300)
-		cam.framerate = 15
-		time.sleep(2)
 
 		distance_sensing = measure_distance.MeasureDistance()
 		amount = 1 # Affected by speed limit signs
@@ -121,8 +118,12 @@ def driveTheSelf(motor, servo):
 
 
 def main(motor, servo):
+	cam = PiCamera()
+	cam.resolution = (300, 300)
+	cam.framerate = 15
+	time.sleep(2)
 	# Run the two functions as multiprocesses
-	proc1 = multiprocessing.Process(target = driveTheSelf, args = (motor, servo, ))
+	proc1 = multiprocessing.Process(target = driveTheSelf, args = (motor, servo, cam, ))
 	proc2 = multiprocessing.Process(target = godMode)
 
 	proc1.start()

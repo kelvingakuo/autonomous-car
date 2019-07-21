@@ -23,11 +23,11 @@ if __name__ == "__main__":
 	conn = server.accept()[0].makefile('rb')
 	try:
 		while True:
-			image_len = struct.unpack('<L', connection.read(struct.calcsize('<L')))[0]
+			image_len = struct.unpack('<L', conn.read(struct.calcsize('<L')))[0]
 			if not image_len:
 				break
 			img = io.BytesIO()
-			img.write(connection.read(image_len))
+			img.write(conn.read(image_len))
 			img.seek(0)
 
 			detection = inferer.generateDetections(img)
