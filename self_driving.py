@@ -22,7 +22,7 @@ logger = central_log_config.central_logger
 # God mode and self_driving in separate processes.
 # Shared variable to indicate when control has been handed back
 
-def godMode(self):
+def godMode():
 	# Double tap 'X' to shut down everything
 	pressedOnce = False 
 	firstTimePress = 0
@@ -45,7 +45,7 @@ def godMode(self):
 							pressedOnce = True
 							firstTimePress = time.time()
 
-def driveTheSelf(self):
+def driveTheSelf():
 	""" 
 	** Conn to relevant server
 	1. Find obstacle ahead
@@ -119,10 +119,10 @@ def driveTheSelf(self):
 				stream.truncate()
 
 
-		finally:
-			conn.write(struct.pack('<L', 0))
-			conn.close()
-			client.close()
+	finally:
+		conn.write(struct.pack('<L', 0))
+		conn.close()
+		client.close()
 
 
 def main():

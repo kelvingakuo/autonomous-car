@@ -224,8 +224,6 @@ class ControlTower(object):
 				self.noPress = True
 				if(self.isSaveTime and self.noPress):
 					saveData.saveFrame(0, 0)
-
-
 								
 			except KeyboardInterrupt:
 				pass

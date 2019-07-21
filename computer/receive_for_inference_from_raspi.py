@@ -5,15 +5,13 @@ import struct
 import time
 import pickle
 
-import detect_objects
-import track_lane
+import perform_all_inference
 
 
 # Receive a frame, detect object and predict steering angle, and return
 
 if __name__ == "__main__":
-	detector = detect_objects.DetectObjects()
-	tracker = track_lane.TrackLane()
+	inferer = perform_all_inference.Infer()
 
 	host = '0.0.0.0'
 	port = 6666
@@ -32,11 +30,11 @@ if __name__ == "__main__":
 			img.write(connection.read(image_len))
 			img.seek(0)
 
-			detection = detector.generateDetections(img)
+			detection = inferer.generateDetections(img)
 			payload = pickle.dumps(detection)
 			conn.sendall(payload) #This most probably doesn't work
 
-			angle = tracker.generateAngle(img)
+			angle = inferer.generateAngle(img)
 			payload = pickle.dumps(angle)
 			conn.sendall(angle)
 
