@@ -53,10 +53,16 @@ class MotorInstructions(object):
 			# FORWARD
 			GPIO.output(self.Motor1A, True)
 			GPIO.output(self.Motor1B, False)
+			# Constant throttle
+			self.pwm.ChangeDutyCycle(65)
+			GPIO.output(self.Motor1E, True)
 		elif(value > 0):	
 			# REVERSE
 			GPIO.output(self.Motor1A, False)
 			GPIO.output(self.Motor1B, True)
+			# Constant throttle
+			self.pwm.ChangeDutyCycle(65)
+			GPIO.output(self.Motor1E, True)
 		else:
 			pass
 

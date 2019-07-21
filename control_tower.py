@@ -9,16 +9,12 @@ import time
 from gpiozero import LED
 from subprocess import call
 
-import self_driving
+import self_driving as driveTheSelf
 import save_frames
 
 from car_controls import servo_instructions
 from car_controls import motor_instructions
-
 from connections import stream_to_pc
-
-
-
 from logs import central_log_config
 logger = central_log_config.central_logger
 
@@ -28,36 +24,35 @@ class ControlTower(object):
 	"""
 	def __init__(self, circServoInstrs = None, circMotorInstrs = None, circStick = None, circConn = None, circSave = None, circCtrLED = None, circConnLED = None,  isCircular = False):
 
-		if(isCircular): # A circular reference from self_driving to enable return of manual control at any time!!
-			self.isTraining = True
-			self.wasDriving = True
-			self.ctrLED = circCtrLED
-			self.connLED = circConnLED
-			self.servoInstrs = circServoInstrs
-			self.motorInstrs = circMotorInstrs
-			self.stick = circStick
-			self.connToServer = circConn
-			self.saveData = circSave
-			self.driveTheSelf = self_driving.SelfDrive(circServoInstrs, circMotorInstrs, circStick, circConn, circSave, circCtrLED, circConnLED)
-			self.ctrLED.on()
-			self.connLED.on()
+		# if(isCircular): # A circular reference from self_driving to enable return of manual control at any time!!
+		# 	self.isTraining = True
+		# 	self.wasDriving = True
+		# 	self.ctrLED = circCtrLED
+		# 	self.connLED = circConnLED
+		# 	self.servoInstrs = circServoInstrs
+		# 	self.motorInstrs = circMotorInstrs
+		# 	self.stick = circStick
+		# 	self.connToServer = circConn
+		# 	self.saveData = circSave
+		# 	self.driveTheSelf = self_driving.SelfDrive(circServoInstrs, circMotorInstrs, circStick, circConn, circSave, circCtrLED, circConnLED)
+		# 	self.ctrLED.on()
+		# 	self.connLED.on()
 
-		else:
-			self.isTraining = False
-			self.wasDriving = False
-			self.ctrLED = LED(23)
-			self.connLED = LED(24)
-			self.workingLED = LED(14) # Program has booted
-			self.workingLED.blink()
-			self.servoInstrs = servo_instructions.ServoInstructions()
-			self.motorInstrs = motor_instructions.MotorInstructions()
-			time.sleep(8) # Wait for steady light on SixAxis Ctrler
-			self.stick = self.connSixAxis(self.ctrLED)
-			self.connToServer = self.connToServer(self.connLED)
-			self.saveData = save_frames.SaveFrames()
-			self.driveTheSelf = self_driving.SelfDrive(self.servoInstrs, self.motorInstrs, self.stick, self.connToServer, self.saveData, self.ctrLED, self.connLED)
-			self.ctrLED.on()
-			self.connLED.on()
+		# else:
+		self.isTraining = False
+		self.wasDriving = False
+		self.ctrLED = LED(23)
+		self.connLED = LED(24)
+		self.workingLED = LED(14) # Program has booted
+		self.workingLED.blink()
+		self.servoInstrs = servo_instructions.ServoInstructions()
+		self.motorInstrs = motor_instructions.MotorInstructions()
+		time.sleep(8) # Wait for steady light on SixAxis Ctrler
+		self.stick = self.connSixAxis(self.ctrLED)
+		self.connToServer = self.connToServer(self.connLED)
+		self.saveData = save_frames.SaveFrames()
+		self.ctrLED.on()
+		self.connLED.on()
 
 
 		
@@ -107,6 +102,7 @@ class ControlTower(object):
 		self.isDriving = False
 		self.isSaveTime = False
 		self.stoppedTraining = 5 # Five training sessions ONLY
+		self.noPress = True
 
 		if(self.wasDriving):
 			self.connToServer.sendInstructions("Control returned. DRIVE!!!!")
@@ -124,6 +120,7 @@ class ControlTower(object):
 							done = True
 								
 						elif((event.type == pygame.JOYAXISMOTION)  and (self.isTraining)):
+							self.noPress = False
 							if(event.axis == 0): # Steer car instruction
 								logger.info("Car swerve. Amount: {}".format(event.value))
 								servoInstrs.setAngle(event.value, 0) # Actually turn the car
@@ -135,31 +132,32 @@ class ControlTower(object):
 							# 	servoInstrs.setAngle(event.value, 3)
 
 							#Motor
-							elif(event.axis == 5):
-								logger.info("Motor throttle. Amount: {}".format(event.value))
-								motorInstrs.throttle(event.value)
-								if(self.isSaveTime):
-									saveData.saveFrame(1, event.value)
+							# elif(event.axis == 5):
+							# 	logger.info("Motor throttle. Amount: {}".format(event.value))
+							# 	motorInstrs.throttle(event.value)
+							# 	if(self.isSaveTime):
+							# 		saveData.saveFrame(1, event.value)
 								
 							elif(event.axis == 4):
 								logger.info("Direction change")
 								motorInstrs.setDirection(event.value)
-								if(self.isSaveTime):
-									if(event.value < 0): # Forward
-										saveData.saveFrame(4, 0)
-									else: #Backward
-										saveData.saveFrame(3, 0)
+								# if(self.isSaveTime):
+								# 	if(event.value < 0): # Forward
+								# 		saveData.saveFrame(4, 0)
+								# 	else: #Backward
+								# 		saveData.saveFrame(3, 0)
 								
 												
 						elif(event.type == pygame.JOYBUTTONDOWN):
+							self.noPress = False
 							if(event.button == 11 and (self.isTraining)):
 								servoInstrs.alignCentre()
 
 							elif(event.button == 5 and (self.isTraining)):
 								logger.info("Car stopping")
 								motorInstrs.stop()
-								if(self.isSaveTime):
-									saveData.saveFrame(2, 0)
+								# if(self.isSaveTime):
+								# 	saveData.saveFrame(2, 0)
 								
 
 							elif(event.button == 2):
@@ -183,11 +181,11 @@ class ControlTower(object):
 									logger.info("Chose self-driving")
 									self.saveData.closeCam()
 									self.connToServer.sendInstructions("The car is now independent.\n")
-									self.connToServer.sendInstructions("Double tap 'X' to regain control\n")
+									self.connToServer.sendInstructions("Double tap 'X' to shut down\n")
 									# Let's drive ourselves
 									self.ctrLED.off()
 									self.connLED.off()
-									self.driveTheSelf.main()
+									driveTheSelf.main() # No manual control. Can only shut down
 						
 
 							elif(event.button == 0): # Shutdown everything
@@ -219,8 +217,13 @@ class ControlTower(object):
 
 							
 						elif(event.type == pygame.JOYBUTTONUP and (self.isTraining)):
+							self.noPress = False
 							if(event.button == 11):
 								servoInstrs.alignCentre()
+
+				self.noPress = True
+				if(self.isSaveTime and self.noPress):
+					saveData.saveFrame(0, 0)
 
 
 								

@@ -15,7 +15,9 @@ class ServoInstructions(object):
 		self.carServo = Servo(6)
 		self.panServo = Servo(2)
 
-		self.carCentre = 67
+		self.carCentre = 58
+		self.carLeft = 95
+		self.carRight = 15
 		self.panCentre = 75
 
 		self.alignCentre()
@@ -28,7 +30,7 @@ class ServoInstructions(object):
 		"""
 		if(what == 0): #Car, pan concurrent
 			if(value != 0):
-				angle1 = math.ceil(np.interp(value, [-1, 0, 1], [10, self.carCentre, 110]))
+				angle1 = math.ceil(np.interp(value, [-1, 0, 1], [self.carRight, self.carCentre, self.carLeft]))
 				# angle2 = math.ceil(np.interp(value, [-1, 0, 1], [140, 75, 28]))
 			else:
 				angle1 = self.carCentre

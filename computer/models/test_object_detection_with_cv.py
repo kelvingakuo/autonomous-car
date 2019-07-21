@@ -4,7 +4,7 @@ import time
 import random
 
 base = "saved_models/object_detection/BEST_MODEL-SO_FAR/detector_wide_angle_fullTF_7000_steps/"
-cvNet = cv2.dnn.readNetFromTensorflow(base + "sorted_frozen_inference_graph.pb", base + "sorted_frozen_inference_graph.pbtxt")
+cvNet = cv2.dnn.readNetFromTensorflow(base + "cv_sorted_frozen_inference_graph.pb", base + "cv_sorted_frozen_inference_graph.pbtxt")
 
 
 labelMap = {1: "Forward", 2: "Stop", 3: "120 Kph Limit", 4: "50 Kph Limit", 5: "No Left Turn", 6: "No Right Turn", 7: "Person", 8: "Car"}

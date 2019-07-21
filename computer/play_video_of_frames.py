@@ -1,0 +1,1 @@
+# Connect to EC2, stream all frames sent to it (and predictions made) to this, and play as video

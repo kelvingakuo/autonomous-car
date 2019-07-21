@@ -23,6 +23,8 @@ class SaveFrames(object):
 		call("sudo rm -rf computer/models/training_data/lane_following", shell = True)
 		call("sudo mkdir computer/models/training_data/lane_following", shell = True)
 
+		self.camera = PiCamera()
+
 	def initCam(self):
 		self.camera.resolution = (640, 480)
 
