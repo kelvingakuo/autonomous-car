@@ -2,14 +2,32 @@ import cv2
 import glob
 import time
 import random
+import cv2
+from keras import load_model
 
 
-class DetectObjects(object):
+class Infer(object):
 	def __init__(self):
 		self.cvNet = cv2.dnn.readNetFromTensorflow("cv_sorted_frozen_inference_graph.pb", "cv_sorted_frozen_inference_graph.pbtxt")
 		self.labelMap = {1: "Forward", 2: "Stop", 3: "120 Kph Limit", 4: "50 Kph Limit", 5: "No Left Turn", 6: "No Right Turn", 7: "Person", 8: "Car"}
 		self.font = cv2.FONT_HERSHEY_SIMPLEX
+		self.tracker_model = load_model("lane_tracker.h5")
 
+	def generateAngle(self, theImg):
+		""" Takes the binary image and runs the lane tracker NN on it to generate the steering angle
+			Params:
+				theImg - Binary image received through the wiiire
+			Returns:
+				angle - The predicted angle
+		"""
+		img = cv2.imread(theImg)
+		img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+		img = cv2.cvtColor(img, cv2.COLOR_RGB2YUV)
+		img = cv2.GaussianBlur(img, (3, 3,), 0)
+
+		angle = self.tracker_model.predict(img)
+
+		return angle
 
 	def generateDetections(self, theImg):
 		""" Returns info about all detected objects in a frame
@@ -50,23 +68,23 @@ class DetectObjects(object):
 
 
 
-	def saveFrames(self):
-		if(classId == 1): # Forward - Blue
-			bgr = (255, 0, 0)	
-		elif(classId == 2): # Stop - Red
-			bgr = (0, 51, 204)
-		elif(classId == 7 or classId == 8): # Person, Car - Green
-			bgr = (0, 128, 0)
-		else: # Signs - Yellow
-			bgr  = (0, 255, 204)
+	# def saveFrames(self, classId, ):
+	# 	if(classId == 1): # Forward - Blue
+	# 		bgr = (255, 0, 0)	
+	# 	elif(classId == 2): # Stop - Red
+	# 		bgr = (0, 51, 204)
+	# 	elif(classId == 7 or classId == 8): # Person, Car - Green
+	# 		bgr = (0, 128, 0)
+	# 	else: # Signs - Yellow
+	# 		bgr  = (0, 255, 204)
 
-		className = self.labelMap[classId]
+	# 	className = self.labelMap[classId]
 
-		rec = cv2.rectangle(img, (int(left), int(top)), (int(right), int(bottom)), bgr, thickness=4)
-				cv2.putText(rec, className, (int(left), int(top) - 10), font, 0.7, bgr, 4 , cv2.LINE_AA)
+	# 	rec = cv2.rectangle(img, (int(left), int(top)), (int(right), int(bottom)), bgr, thickness=4)
+	# 			cv2.putText(rec, className, (int(left), int(top) - 10), font, 0.7, bgr, 4 , cv2.LINE_AA)
 
-		newName = "test_data_for_object_detection/cv_detections/" + str(random.randint(252, 8979846544)) + ".jpg"
-		print("Took: {} seconds from image loading to inference".format(time.time() - start))
-		cv2.imwrite(newName, img)
+	# 	newName = "test_data_for_object_detection/cv_detections/" + str(random.randint(252, 8979846544)) + ".jpg"
+	# 	print("Took: {} seconds from image loading to inference".format(time.time() - start))
+	# 	cv2.imwrite(newName, img)
 
 
