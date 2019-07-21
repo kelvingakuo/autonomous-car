@@ -12,8 +12,6 @@ import multiprocessing
 from picamera import PiCamera
 
 from driving_instructors import measure_distance
-from car_controls import motor_instructions
-from car_controls import servo_instructions
 
 from logs import central_log_config
 logger = central_log_config.central_logger
@@ -45,7 +43,7 @@ def godMode():
 							pressedOnce = True
 							firstTimePress = time.time()
 
-def driveTheSelf():
+def driveTheSelf(motor, servo):
 	""" 
 	** Conn to relevant server
 	1. Find obstacle ahead
@@ -59,9 +57,6 @@ def driveTheSelf():
 	conn = client.makefile('wb')
 
 	try:
-		servo = servo_instructions.ServoInstructions()
-		motor = motor_instructions.MotorInstructions()
-
 		carCentre = 58
 		carLeft = 95
 		carRight = 15
@@ -125,9 +120,9 @@ def driveTheSelf():
 		client.close()
 
 
-def main():
+def main(motor, servo):
 	# Run the two functions as multiprocesses
-	proc1 = multiprocessing.Process(target = driveTheSelf)
+	proc1 = multiprocessing.Process(target = driveTheSelf, args = (motor, servo, ))
 	proc2 = multiprocessing.Process(target = godMode)
 
 	proc1.start()

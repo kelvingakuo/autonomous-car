@@ -185,7 +185,7 @@ class ControlTower(object):
 									# Let's drive ourselves
 									self.ctrLED.off()
 									self.connLED.off()
-									driveTheSelf.main() # No manual control. Can only shut down
+									driveTheSelf.main(motorInstrs, servoInstrs) # No manual control. Can only shut down
 						
 
 							elif(event.button == 0): # Shutdown everything
