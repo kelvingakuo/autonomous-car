@@ -39,8 +39,8 @@ if __name__ == "__main__":
 			conn.sendall(angle)
 
 	finally:
-		connection.close()
-		server_socket.close()
+		conn.close()
+		server.close()
 
 
 

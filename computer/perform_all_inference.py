@@ -3,7 +3,7 @@ import glob
 import time
 import random
 import cv2
-from keras import load_model
+from keras.models import load_model
 
 
 class Infer(object):
