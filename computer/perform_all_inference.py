@@ -36,7 +36,7 @@ class Infer(object):
 			Returns:
 				detectionData - Dictionary with information about all objects detected
 		"""
-		img = cv2.imread(theImg)
+		img = cv2.imdecode(theImg)
 		rows = img.shape[0]
 		cols = img.shape[1]
 		self.cvNet.setInput(cv2.dnn.blobFromImage(img, size=(300, 300), swapRB = True, crop=False))

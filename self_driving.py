@@ -78,9 +78,9 @@ def driveTheSelf(motor, servo, cam):
 				conn.write(stream.read()) # Send data
 
 				# Object detection first
-				objects = pickle.loads(conn.recv(4096))
+				objects = pickle.loads(client.recv(4096))
 				# Lane tracking next
-				angle = pickle.loads(conn.recv(4096))
+				angle = pickle.loads(client.recv(4096))
 
 
 				classes = objects["classIds"]
@@ -126,11 +126,13 @@ def main(motor, servo):
 	cam.framerate = 15
 	time.sleep(2)
 	# Run the two functions as multiprocesses
-	proc1 = multiprocessing.Process(target = driveTheSelf, args = (motor, servo, cam, ))
-	proc2 = multiprocessing.Process(target = godMode)
+	# proc1 = multiprocessing.Process(target = driveTheSelf, args = (motor, servo, cam, ))
+	# proc2 = multiprocessing.Process(target = godMode)
 
-	proc1.start()
-	proc2.start()
+	# proc1.start()
+	# proc2.start()
 
-	proc1.join()
-	proc2.join()
+	# proc1.join()
+	# proc2.join()
+
+	driveTheSelf(motor, servo, cam)
