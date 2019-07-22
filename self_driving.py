@@ -110,8 +110,11 @@ def driveTheSelf(motor, servo, cam):
 				stream.seek(0)
 				stream.truncate()
 
+	except KeyboardInterrupt:
+		cam.close()
 
 	finally:
+		cam.close()
 		conn.write(struct.pack('<L', 0))
 		conn.close()
 		client.close()
