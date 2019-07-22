@@ -20,7 +20,8 @@ class Infer(object):
 			Returns:
 				angle - The predicted angle
 		"""
-		img = cv2.imread(theImg)
+		img = cv2.imdecode(theImg, cv2.IMREAD_COLOR)
+		print(img.shape)
 		img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 		img = cv2.cvtColor(img, cv2.COLOR_RGB2YUV)
 		img = cv2.GaussianBlur(img, (3, 3,), 0)
@@ -36,9 +37,10 @@ class Infer(object):
 			Returns:
 				detectionData - Dictionary with information about all objects detected
 		"""
-		img = cv2.imdecode(theImg)
+		img = cv2.imdecode(theImg, cv2.IMREAD_COLOR)
 		rows = img.shape[0]
 		cols = img.shape[1]
+		print(rows)
 		self.cvNet.setInput(cv2.dnn.blobFromImage(img, size=(300, 300), swapRB = True, crop=False))
 		cvOut = self.cvNet.forward()
 
@@ -51,6 +53,7 @@ class Infer(object):
 
 		for detection in cvOut[0,0,:,:]: # detection = [0, class, score, left, top, right, bottom]
 			score = float(detection[2])
+			print(score)
 			if score > 0.5:
 				classId = detection[1]
 				left = detection[3] * cols

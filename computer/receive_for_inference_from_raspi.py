@@ -21,26 +21,45 @@ if __name__ == "__main__":
 	server.bind((host, port))
 	server.listen(1)
 
-	conn = server.accept()
-	fil = conn[0].makefile('rb')
+	conn, addr = server.accept()
+	print("Connected to by: {} {}".format(conn, addr))
+	# fil = conn[0].makefile('rb')
 	try:
 		while True:
-			image_len = struct.unpack('<L', fil.read(struct.calcsize('<L')))[0]
-			if not image_len:
-				break
-			img = io.BytesIO()
-			img.write(fil.read(image_len))
-			img.seek(0)
+			# image_len = struct.unpack('<L', fil.read(struct.calcsize('<L')))[0]
+			# if not image_len:
+			# 	break
+			# img = io.BytesIO()
+			# img.write(fil.read(image_len))
+			# img.seek(0)
 
-			img = np.fromstring(img.getvalue(), dtype=np.uint8)
+			# img = np.fromstring(img.getvalue(), dtype=np.uint8)
 
-			detection = inferer.generateDetections(img)
-			payload = pickle.dumps(detection)
-			conn.sendall(payload) #This most probably doesn't work
+			data = b""
+			size = struct.calcsize(">L")
+			print(size)
+			while True:
+				while (len(data) < size):
+					data += conn.recv(4096)
 
-			angle = inferer.generateAngle(img)
-			payload = pickle.dumps(angle)
-			conn.sendall(angle)
+				msgSizePacked = data[:size]
+				data = data[size:]
+				msgSize = struct.unpack(">L", msgSizePacked)[0]
+				while(len(data) < msgSize):
+					data+=conn.recv(4096)
+
+				frameData = data[:msgSize]
+				data = data[msgSize:]
+
+				img = pickle.loads(frameData, fix_imports=True, encoding="bytes")
+				
+				detection = inferer.generateDetections(img)
+				payload = pickle.dumps(detection)
+				conn.sendall(payload) #This most probably doesn't work
+
+				angle = inferer.generateAngle(img)
+				payload = pickle.dumps(angle)
+				conn.sendall(angle)
 
 	finally:
 		conn.close()

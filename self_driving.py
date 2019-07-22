@@ -69,16 +69,27 @@ def driveTheSelf(motor, servo, cam):
 		while True:
 			motor.setDirection(-1)
 
-			# rawCapture = PiRGBArray(cam, size=(3000, 300))
+			rawCapture = PiRGBArray(cam, size=(3000, 300))
 
-			stream = io.BytesIO()
+			# stream = io.BytesIO()
 			# 2. Capture continuosly
-			for cap in cam.capture_continuous(stream, 'jpeg', use_video_port = True):
+			# for cap in cam.capture_continuous(stream, 'jpeg', use_video_port = True):
+			for cap in cam.capture_continuous(rawCapture, format="bgr", use_video_port=True):
 				motor.throttle(amount)
-				conn.write(struct.pack('<L', stream.tell()))
-				conn.flush()
-				stream.seek(0)
-				conn.write(stream.read()) # Send data
+				# conn.write(struct.pack('<L', stream.tell()))
+				# conn.flush()
+				# stream.seek(0)
+				# conn.write(stream.read()) # Send data
+
+				img = cap.array # NP Array
+				status, frame = cv2.imencode(".bgr", img)
+				data = pickle.dumps(frame, 0)
+				size = len(data)
+
+				client.sendall(struct.pack('>L', size) + data)
+
+
+
 
 				# Object detection first
 				objects = pickle.loads(client.recv(4096))
@@ -112,6 +123,7 @@ def driveTheSelf(motor, servo, cam):
 				# Next
 				stream.seek(0)
 				stream.truncate()
+				rawCapture.truncate(0)
 
 	except KeyboardInterrupt:
 		cam.close()
