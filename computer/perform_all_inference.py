@@ -22,7 +22,6 @@ class Infer(object):
 		"""
 		img = cv2.imdecode(theImg, cv2.IMREAD_COLOR)
 		img = cv2.resize(img, (200, 66))
-		print(img.shape)
 		img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 		img = cv2.cvtColor(img, cv2.COLOR_RGB2YUV)
 		img = cv2.GaussianBlur(img, (3, 3,), 0)
@@ -43,7 +42,6 @@ class Infer(object):
 		img = cv2.imdecode(theImg, cv2.IMREAD_COLOR)
 		rows = img.shape[0]
 		cols = img.shape[1]
-		print(rows)
 		self.cvNet.setInput(cv2.dnn.blobFromImage(img, size=(300, 300), swapRB = True, crop=False))
 		cvOut = self.cvNet.forward()
 
@@ -89,8 +87,8 @@ class Infer(object):
 	# 	rec = cv2.rectangle(img, (int(left), int(top)), (int(right), int(bottom)), bgr, thickness=4)
 	# 			cv2.putText(rec, className, (int(left), int(top) - 10), font, 0.7, bgr, 4 , cv2.LINE_AA)
 
-	# 	newName = "test_data_for_object_detection/cv_detections/" + str(random.randint(252, 8979846544)) + ".jpg"
-	# 	print("Took: {} seconds from image loading to inference".format(time.time() - start))
+	# 	newName = str(random.randint(252, 8979846544)) + ".jpg"
 	# 	cv2.imwrite(newName, img)
+	# 	print("Took: {} seconds from image loading to inference".format(time.time() - start))
 
 

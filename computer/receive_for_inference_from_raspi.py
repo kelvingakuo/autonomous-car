@@ -23,18 +23,8 @@ if __name__ == "__main__":
 
 	conn, addr = server.accept()
 	print("Connected to by: {} {}".format(conn, addr))
-	# fil = conn[0].makefile('rb')
 	try:
 		while True:
-			# image_len = struct.unpack('<L', fil.read(struct.calcsize('<L')))[0]
-			# if not image_len:
-			# 	break
-			# img = io.BytesIO()
-			# img.write(fil.read(image_len))
-			# img.seek(0)
-
-			# img = np.fromstring(img.getvalue(), dtype=np.uint8)
-
 			data = b""
 			size = struct.calcsize(">L")
 			print(size)
@@ -59,7 +49,6 @@ if __name__ == "__main__":
 
 				angle = inferer.generateAngle(img)
 				angle = str(angle).encode()
-				#payload = pickle.dumps(angle)
 				conn.sendall(angle)
 
 	finally:

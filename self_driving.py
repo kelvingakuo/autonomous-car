@@ -69,7 +69,7 @@ def driveTheSelf(motor, servo, cam):
 		while True:
 			motor.setDirection(-1)
 
-			rawCapture = PiRGBArray(cam, size=(300, 300))
+			rawCapture = PiRGBArray(cam, size=(640, 480))
 
 		
 			# 2. Capture continuosly
@@ -99,10 +99,14 @@ def driveTheSelf(motor, servo, cam):
 				is120Kph = any(cls == 3 for cls in classes)
 
 				if(isObstacle): # Object in the middle?
+					logger.info("Stopping because obstacle")
 					motor.stop()
 				else:
 					if(isStopSign): # Stop in periphery?
+						logger.info("Stopping because stop detected")
 						motor.stop()
+				else:
+					motor.setDirection(-1)
 
 				# Execute angle
 				value = np.interp(angle, [carRight, carCentre, carLeft], [-1, 0, 1])
@@ -126,7 +130,7 @@ def driveTheSelf(motor, servo, cam):
 
 def main(motor, servo):
 	cam = PiCamera()
-	cam.resolution = (300, 300)
+	cam.resolution = (640, 480)
 	cam.framerate = 15
 	time.sleep(2)
 	# Run the two functions as multiprocesses
