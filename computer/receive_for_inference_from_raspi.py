@@ -4,6 +4,7 @@ import socket
 import struct
 import time
 import pickle
+import numpy as np
 
 import perform_all_inference
 
@@ -30,6 +31,8 @@ if __name__ == "__main__":
 			img = io.BytesIO()
 			img.write(fil.read(image_len))
 			img.seek(0)
+
+			img = np.fromstring(img.getvalue(), dtype=np.uint8)
 
 			detection = inferer.generateDetections(img)
 			payload = pickle.dumps(detection)

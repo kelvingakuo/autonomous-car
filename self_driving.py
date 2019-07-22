@@ -11,6 +11,7 @@ import multiprocessing
 from subprocess import call
 
 from picamera import PiCamera
+from picamera.array import PiRGBArray
 
 from driving_instructors import measure_distance
 
@@ -67,6 +68,8 @@ def driveTheSelf(motor, servo, cam):
 		amount = 1 # Affected by speed limit signs
 		while True:
 			motor.setDirection(-1)
+
+			# rawCapture = PiRGBArray(cam, size=(3000, 300))
 
 			stream = io.BytesIO()
 			# 2. Capture continuosly
