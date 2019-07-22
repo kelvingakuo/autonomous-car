@@ -21,12 +21,15 @@ class Infer(object):
 				angle - The predicted angle
 		"""
 		img = cv2.imdecode(theImg, cv2.IMREAD_COLOR)
+		img = cv2.resize(img, (200, 66))
 		print(img.shape)
 		img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 		img = cv2.cvtColor(img, cv2.COLOR_RGB2YUV)
 		img = cv2.GaussianBlur(img, (3, 3,), 0)
+		img = np.expand_dims(img, axis=0)
 
 		angle = self.tracker_model.predict(img)
+		angle = angle[0][0]
 
 		return angle
 

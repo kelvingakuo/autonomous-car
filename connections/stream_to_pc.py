@@ -33,7 +33,7 @@ class StreamClient(object):
 		""" Sends logs and instructions to the server.
 			Run 'receiveInstructions()' on server
 		"""
-		self.client.sendall(instructions)
+		self.client.sendall(instructions.encode())
 
 
 	# def sendFrameToServer(self, action, value):

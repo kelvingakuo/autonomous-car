@@ -51,14 +51,15 @@ if __name__ == "__main__":
 				frameData = data[:msgSize]
 				data = data[msgSize:]
 
-				img = pickle.loads(frameData, fix_imports=True, encoding="bytes")
+				img = pickle.loads(frameData)
 				
 				detection = inferer.generateDetections(img)
 				payload = pickle.dumps(detection)
 				conn.sendall(payload) #This most probably doesn't work
 
 				angle = inferer.generateAngle(img)
-				payload = pickle.dumps(angle)
+				angle = str(angle).encode()
+				#payload = pickle.dumps(angle)
 				conn.sendall(angle)
 
 	finally:

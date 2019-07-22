@@ -69,36 +69,30 @@ def driveTheSelf(motor, servo, cam):
 		while True:
 			motor.setDirection(-1)
 
-			rawCapture = PiRGBArray(cam, size=(3000, 300))
+			rawCapture = PiRGBArray(cam, size=(300, 300))
 
-			# stream = io.BytesIO()
+		
 			# 2. Capture continuosly
-			# for cap in cam.capture_continuous(stream, 'jpeg', use_video_port = True):
 			for cap in cam.capture_continuous(rawCapture, format="bgr", use_video_port=True):
 				motor.throttle(amount)
-				# conn.write(struct.pack('<L', stream.tell()))
-				# conn.flush()
-				# stream.seek(0)
-				# conn.write(stream.read()) # Send data
-
+			
 				img = cap.array # NP Array
-				status, frame = cv2.imencode(".bgr", img)
+				rawCapture.truncate(0)
+				status, frame = cv2.imencode(".jpg", img)
 				data = pickle.dumps(frame, 0)
 				size = len(data)
 
 				client.sendall(struct.pack('>L', size) + data)
 
-
-
-
 				# Object detection first
-				objects = pickle.loads(client.recv(4096))
+				objects = pickle.loads(client.recv(4096), encoding = "bytes")
 				# Lane tracking next
-				angle = pickle.loads(client.recv(4096))
+				angle = client.recv(4096)
+				angle = float(angle.decode())
 
 
-				classes = objects["classIds"]
-				lefts = objects["lefts"]
+				classes = objects[b"classIds"]
+				lefts = objects[b"lefts"]
 				isStopSign = any(cls == 2 for cls in classes)
 				isObstacle = any((lef >= 100 and lef <= 200) for lef in lefts)
 				is50Kph = any(cls == 4 for cls in classes)
@@ -119,11 +113,6 @@ def driveTheSelf(motor, servo, cam):
 					amount = 0.5
 				elif(is120Kph):
 					amount = 1
-				
-				# Next
-				stream.seek(0)
-				stream.truncate()
-				rawCapture.truncate(0)
 
 	except KeyboardInterrupt:
 		cam.close()
