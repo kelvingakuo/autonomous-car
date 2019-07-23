@@ -180,7 +180,8 @@ class ControlTower(object):
 									# Self-driving
 									logger.info("Chose self-driving")
 									self.saveData.closeCam()
-									self.connToServer.sendInstructions("The car is now independent. Goodbye!!\n")
+									self.connToServer.sendInstructions("The car is now independent.\n")
+									self.connToServer.sendInstructions("Double tap 'X' to shut everything down.\n")
 									# Let's drive ourselves
 									self.ctrLED.off()
 									self.connLED.off()
