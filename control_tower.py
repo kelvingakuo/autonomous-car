@@ -127,9 +127,9 @@ class ControlTower(object):
 								if(self.isSaveTime):
 									saveData.saveFrame(0, event.value) # Save the frame and steering amount
 								
-							# elif(event.axis == 3): #Pan
-							# 	logger.info("Cam pan. Amount: {}".format(event.value))
-							# 	servoInstrs.setAngle(event.value, 3)
+							elif(event.axis == 3): #Pan
+								logger.info("Cam pan. Amount: {}".format(event.value))
+								servoInstrs.setAngle(event.value, 3)
 
 							#Motor
 							# elif(event.axis == 5):
@@ -180,12 +180,12 @@ class ControlTower(object):
 									# Self-driving
 									logger.info("Chose self-driving")
 									self.saveData.closeCam()
-									self.connToServer.sendInstructions("The car is now independent.\n")
-									self.connToServer.sendInstructions("Double tap 'X' to shut down\n")
+									self.connToServer.sendInstructions("The car is now independent. Goodbye!!\n")
 									# Let's drive ourselves
 									self.ctrLED.off()
 									self.connLED.off()
-									event.type = pygame.QUIT
+									done = True
+									self.connToServer.shutThingsDown()
 									driveTheSelf.main(motorInstrs, servoInstrs) # No manual control. Can only shut down
 
 						

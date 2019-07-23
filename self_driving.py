@@ -1,3 +1,4 @@
+import cv2
 import math
 import numpy as np
 import pickle
@@ -57,8 +58,6 @@ def getPreds(cam, client):
 	3. Detect objects
 	4. Return manual control whenever shit gets too real
 	"""
-	logger.info("Camera started and server connected to!!!!")
-
 	try:
 		work = True
 		rawCapture = PiRGBArray(cam, size=(640, 480))
@@ -88,10 +87,10 @@ def getPreds(cam, client):
 		cam.close()
 		work = False
 
-	finally:
-		work = False
-		cam.close()
-		client.close()
+	#finally:
+	#	work = False
+	#	cam.close()
+	#	client.close()
 
 
 def makeDecisions(motor, servo, cam, client):
@@ -111,25 +110,20 @@ def makeDecisions(motor, servo, cam, client):
 	drive = True
 	while True:
 		try:
-			logger.info("Car moving at {} direction and {} speed with queue".format(direction, amount))
 			payload = next(getPreds(cam, client))
 			objects = payload["detections"]
 			angle = payload["angle"]
 
-			classes = objects[b"classIds"]
-			lefts = objects[b"lefts"]
+			classes = objects["classIds"]
+			lefts = objects["lefts"]
 			isStopSign = any(cls == 2 for cls in classes)
-			isObstacle = any((lef >= 100 and lef <= 200) for lef in lefts)
-			is50Kph = any(cls == 4 for cls in classes)
-			is120Kph = any(cls == 3 for cls in classes)
-
+			isObstacle = any((lef >= 250 and lef <= 390) for lef in lefts)
 
 			if(isObstacle or isStopSign): # Object in the middle or stop?
-				logger.info("Stopping because obstacle = {}  or stop = {}".format(isObstacle, isStopSign))
 				motor.stop()
 				amount = 0
 				direction = 0
-
+				continue()
 			else:
 				motor.setDirection(-1)
 				motor.throttle(amount)
@@ -138,6 +132,8 @@ def makeDecisions(motor, servo, cam, client):
 			value = np.interp(angle, [carRight, carCentre, carLeft], [-1, 0, 1])
 			servo.setAngle(value, 0)
 
+			is50Kph = any(cls == 4 for cls in classes)
+			is120Kph = any(cls == 3 for cls in classes)
 			#Speed limit in periphery?
 			if(is50Kph):
 				amount = 0.5
@@ -145,7 +141,9 @@ def makeDecisions(motor, servo, cam, client):
 			elif(is120Kph):
 				amount = 1
 				direction = -1
-		except 
+
+		except Exception as e:
+			logger.error("DECISION MAKING FAILED: {}".format(e))
 
 
 def main(motor, servo):

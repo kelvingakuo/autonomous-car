@@ -87,9 +87,8 @@ class StreamClient(object):
 	# 	self.conn.close()
 
 
-	# def closeEntireConn(self):
-	# 	""" Closes the client connection entirely
-	# 	"""
-	# 	self.camera.close()
-	# 	self.client.close()
+	def shutThingsDown(self):
+		""" Closes the client connection entirely
+		"""
+		self.client.close()
 
