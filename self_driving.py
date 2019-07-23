@@ -46,7 +46,7 @@ def godMode():
 							pressedOnce = True
 							firstTimePress = time.time()
 
-def driveTheSelf(motor, servo, cam):
+def getPreds(motor, servo , outputQueue):
 	""" 
 	** Conn to relevant server
 	1. Find obstacle ahead
@@ -55,27 +55,24 @@ def driveTheSelf(motor, servo, cam):
 	4. Return manual control whenever shit gets too real
 	"""
 	# Init a bunch of things
+	cam = PiCamera()
+	cam.resolution = (640, 480)
+	cam.framerate = 15
+	time.sleep(2)
+
 	client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	client.connect(("ec2-3-15-24-217.us-east-2.compute.amazonaws.com", 6666))
+	client.connect(("ec2-3-15-154-186.us-east-2.compute.amazonaws.com", 6666))
 	conn = client.makefile('wb')
 
-	try:
-		carCentre = 58
-		carLeft = 95
-		carRight = 15
+	logger.info("Camera started and server connected to!!!!")
 
-		distance_sensing = measure_distance.MeasureDistance()
-		amount = 1 # Affected by speed limit signs
+	try:
 		while True:
 			motor.setDirection(-1)
-
 			rawCapture = PiRGBArray(cam, size=(640, 480))
 
-		
 			# 2. Capture continuosly
 			for cap in cam.capture_continuous(rawCapture, format="bgr", use_video_port=True):
-				motor.throttle(amount)
-			
 				img = cap.array # NP Array
 				rawCapture.truncate(0)
 				status, frame = cv2.imencode(".jpg", img)
@@ -90,6 +87,43 @@ def driveTheSelf(motor, servo, cam):
 				angle = client.recv(4096)
 				angle = float(angle.decode())
 
+				payload = {"detections": objects, "angle": angle}
+				outputQueue.put(payload)
+				
+	except KeyboardInterrupt:
+		cam.close()
+
+	finally:
+		cam.close()
+		conn.close()
+		client.close()
+
+
+def makeDecisions(outputQueue):
+	carCentre = 58
+	carLeft = 95
+	carRight = 15
+
+	distance_sensing = measure_distance.MeasureDistance()
+	amount = 1 # Affected by speed limit signs
+	direction = -1
+
+	motor.setDirection(direction)
+	motor.throttle(amount)
+
+	logger.info("Car starting on empty queue with default direction and speed")
+
+	status = outputQueue.empty()
+	while True: # Wait for queue
+		if not outputQueue.empty():
+			while True:
+				# motor.setDirection(direction)
+				# motor.throttle(amount)
+				logger.info("Car moving at {} direction and {} speed with queue".format(direction, amount))
+
+				payload = outputQueue.get()
+				objects = payload["detections"]
+				angle = payload["angle"]
 
 				classes = objects[b"classIds"]
 				lefts = objects[b"lefts"]
@@ -98,15 +132,21 @@ def driveTheSelf(motor, servo, cam):
 				is50Kph = any(cls == 4 for cls in classes)
 				is120Kph = any(cls == 3 for cls in classes)
 
+
 				if(isObstacle): # Object in the middle?
 					logger.info("Stopping because obstacle")
 					motor.stop()
+					amount = 0
+					direction = 0
 				else:
 					if(isStopSign): # Stop in periphery?
 						logger.info("Stopping because stop detected")
 						motor.stop()
+						amount = 0
+						direction = 0
 				else:
 					motor.setDirection(-1)
+					motor.throttle(amount)
 
 				# Execute angle
 				value = np.interp(angle, [carRight, carCentre, carLeft], [-1, 0, 1])
@@ -115,32 +155,26 @@ def driveTheSelf(motor, servo, cam):
 				#Speed limit in periphery?
 				if(is50Kph):
 					amount = 0.5
+					direction = -1
 				elif(is120Kph):
 					amount = 1
-
-	except KeyboardInterrupt:
-		cam.close()
-
-	finally:
-		cam.close()
-		conn.write(struct.pack('<L', 0))
-		conn.close()
-		client.close()
+					direction = -1
 
 
 def main(motor, servo):
-	cam = PiCamera()
-	cam.resolution = (640, 480)
-	cam.framerate = 15
-	time.sleep(2)
-	# Run the two functions as multiprocesses
-	# proc1 = multiprocessing.Process(target = driveTheSelf, args = (motor, servo, cam, ))
-	# proc2 = multiprocessing.Process(target = godMode)
+	q = multiprocessing.Queue()
 
-	# proc1.start()
-	# proc2.start()
+	# Run as multiple processes
+	proc1 = multiprocessing.Process(target = getPreds, args = (motor, servo, q, ))
+	proc2 = multiprocessing.Process(target = makeDecisions, args = (q, ))
+	proc3 = multiprocessing.Process(target = godMode)
+
+	proc1.start()
+	proc2.start()
+	proc3.start()
 
 	# proc1.join()
 	# proc2.join()
 
-	driveTheSelf(motor, servo, cam)
+
+	
