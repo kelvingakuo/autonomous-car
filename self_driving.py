@@ -46,7 +46,7 @@ def godMode():
 							pressedOnce = True
 							firstTimePress = time.time()
 
-def getPreds(motor, servo , outputQueue):
+def getPreds(outputQueue):
 	""" 
 	** Conn to relevant server
 	1. Find obstacle ahead
@@ -54,12 +54,6 @@ def getPreds(motor, servo , outputQueue):
 	3. Detect objects
 	4. Return manual control whenever shit gets too real
 	"""
-	# Init a bunch of things
-	cam = PiCamera()
-	cam.resolution = (640, 480)
-	cam.framerate = 15
-	time.sleep(2)
-
 	client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	client.connect(("ec2-3-15-154-186.us-east-2.compute.amazonaws.com", 6666))
 	conn = client.makefile('wb')
@@ -67,10 +61,9 @@ def getPreds(motor, servo , outputQueue):
 	logger.info("Camera started and server connected to!!!!")
 
 	try:
-		while True:
-			motor.setDirection(-1)
-			rawCapture = PiRGBArray(cam, size=(640, 480))
-
+		work = True
+		rawCapture = PiRGBArray(cam, size=(640, 480))
+		while work:
 			# 2. Capture continuosly
 			for cap in cam.capture_continuous(rawCapture, format="bgr", use_video_port=True):
 				img = cap.array # NP Array
@@ -92,14 +85,16 @@ def getPreds(motor, servo , outputQueue):
 				
 	except KeyboardInterrupt:
 		cam.close()
+		work = False
 
 	finally:
+		work = False
 		cam.close()
 		conn.close()
 		client.close()
 
 
-def makeDecisions(outputQueue):
+def makeDecisions(motor, servo, outputQueue):
 	carCentre = 58
 	carLeft = 95
 	carRight = 15
@@ -133,17 +128,12 @@ def makeDecisions(outputQueue):
 				is120Kph = any(cls == 3 for cls in classes)
 
 
-				if(isObstacle): # Object in the middle?
-					logger.info("Stopping because obstacle")
+				if(isObstacle or isStopSign): # Object in the middle or stop?
+					logger.info("Stopping because obstacle = {}  or stop = {}".format(isObstacle, isStopSign))
 					motor.stop()
 					amount = 0
 					direction = 0
-				else:
-					if(isStopSign): # Stop in periphery?
-						logger.info("Stopping because stop detected")
-						motor.stop()
-						amount = 0
-						direction = 0
+
 				else:
 					motor.setDirection(-1)
 					motor.throttle(amount)
@@ -163,15 +153,20 @@ def makeDecisions(outputQueue):
 
 def main(motor, servo):
 	q = multiprocessing.Queue()
+	# Init a bunch of things
+	cam = PiCamera()
+	cam.resolution = (640, 480)
+	cam.framerate = 15
+	time.sleep(2)
 
 	# Run as multiple processes
-	proc1 = multiprocessing.Process(target = getPreds, args = (motor, servo, q, ))
-	proc2 = multiprocessing.Process(target = makeDecisions, args = (q, ))
-	proc3 = multiprocessing.Process(target = godMode)
+	proc1 = multiprocessing.Process(target = getPreds, args = q, cam, ))
+	proc2 = multiprocessing.Process(target = makeDecisions, args = (motor, servo, q, ))
+	# proc3 = multiprocessing.Process(target = godMode)
 
 	proc1.start()
 	proc2.start()
-	proc3.start()
+	# proc3.start()
 
 	# proc1.join()
 	# proc2.join()
