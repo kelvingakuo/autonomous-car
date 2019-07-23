@@ -4,6 +4,11 @@
 		"pc_port": 5500
 	},
 
+	"ec2":{
+		"ec2_host": "",
+		"ec2_port": 6666,
+	},
+
 	"leds":{
 		"boot_led": 21,
 		"sixaxis_connected_led": 24,

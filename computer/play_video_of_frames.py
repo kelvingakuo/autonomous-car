@@ -1,1 +1,0 @@
-# Connect to EC2, stream all frames sent to it (and predictions made) to this, and play as video... probably as an extra client to receive_for_inference?

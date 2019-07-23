@@ -132,20 +132,20 @@ class ControlTower(object):
 								servoInstrs.setAngle(event.value, 3)
 
 							#Motor
-							# elif(event.axis == 5):
-							# 	logger.info("Motor throttle. Amount: {}".format(event.value))
-							# 	motorInstrs.throttle(event.value)
-							# 	if(self.isSaveTime):
-							# 		saveData.saveFrame(1, event.value)
+							elif(event.axis == 5):
+								logger.info("Motor throttle. Amount: {}".format(event.value))
+								motorInstrs.throttle(event.value)
+								if(self.isSaveTime):
+									saveData.saveFrame(1, event.value)
 								
 							elif(event.axis == 4):
 								logger.info("Direction change")
 								motorInstrs.setDirection(event.value)
-								# if(self.isSaveTime):
-								# 	if(event.value < 0): # Forward
-								# 		saveData.saveFrame(4, 0)
-								# 	else: #Backward
-								# 		saveData.saveFrame(3, 0)
+								if(self.isSaveTime):
+									if(event.value < 0): # Forward
+										saveData.saveFrame(4, 0)
+									else: #Backward
+										saveData.saveFrame(3, 0)
 								
 												
 						elif(event.type == pygame.JOYBUTTONDOWN):
@@ -156,8 +156,8 @@ class ControlTower(object):
 							elif(event.button == 5 and (self.isTraining)):
 								logger.info("Car stopping")
 								motorInstrs.stop()
-								# if(self.isSaveTime):
-								# 	saveData.saveFrame(2, 0)
+								if(self.isSaveTime):
+									saveData.saveFrame(2, 0)
 								
 
 							elif(event.button == 2):

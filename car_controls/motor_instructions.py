@@ -30,7 +30,7 @@ class MotorInstructions(object):
 			The max speed should be 100... not 75
 		Params: pressed - Value of axis 5
 		"""
-		speed = np.interp(pressed, [-1, 1], [0, 75])
+		speed = np.interp(pressed, [-1, 1], [0, 70])
 		self.pwm.ChangeDutyCycle(speed)
 		GPIO.output(self.Motor1E, True)
 

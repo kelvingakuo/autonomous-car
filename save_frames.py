@@ -35,8 +35,6 @@ class SaveFrames(object):
 		except AttributeError:
 			pass
 
-
-
 	def saveFrame(self, action, value):
 		""" Takes picture of current view, computes name and saves in computer/models/training_data/lane_following
 			Params:

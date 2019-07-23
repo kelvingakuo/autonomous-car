@@ -70,25 +70,3 @@ class Infer(object):
 
 		return detectionData
 
-
-
-	# def saveFrames(self, classId, ):
-	# 	if(classId == 1): # Forward - Blue
-	# 		bgr = (255, 0, 0)	
-	# 	elif(classId == 2): # Stop - Red
-	# 		bgr = (0, 51, 204)
-	# 	elif(classId == 7 or classId == 8): # Person, Car - Green
-	# 		bgr = (0, 128, 0)
-	# 	else: # Signs - Yellow
-	# 		bgr  = (0, 255, 204)
-
-	# 	className = self.labelMap[classId]
-
-	# 	rec = cv2.rectangle(img, (int(left), int(top)), (int(right), int(bottom)), bgr, thickness=4)
-	# 			cv2.putText(rec, className, (int(left), int(top) - 10), font, 0.7, bgr, 4 , cv2.LINE_AA)
-
-	# 	newName = str(random.randint(252, 8979846544)) + ".jpg"
-	# 	cv2.imwrite(newName, img)
-	# 	print("Took: {} seconds from image loading to inference".format(time.time() - start))
-
-

@@ -45,11 +45,7 @@ if __name__ == "__main__":
 				
 				detection = inferer.generateDetections(img)
 				payload = pickle.dumps(detection)
-				conn.sendall(payload) #This most probably doesn't work
-
-				angle = inferer.generateAngle(img)
-				angle = str(angle).encode()
-				conn.sendall(angle)
+				conn.sendall(payload)
 
 	finally:
 		conn.close()
