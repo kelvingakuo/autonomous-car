@@ -46,7 +46,7 @@ def godMode():
 							pressedOnce = True
 							firstTimePress = time.time()
 
-def getPreds(outputQueue):
+def getPreds(outputQueue, cam):
 	""" 
 	** Conn to relevant server
 	1. Find obstacle ahead
@@ -160,16 +160,17 @@ def main(motor, servo):
 	time.sleep(2)
 
 	# Run as multiple processes
-	proc1 = multiprocessing.Process(target = getPreds, args = q, cam, ))
+	proc1 = multiprocessing.Process(target = getPreds, args = (q, cam, ))
 	proc2 = multiprocessing.Process(target = makeDecisions, args = (motor, servo, q, ))
-	# proc3 = multiprocessing.Process(target = godMode)
+	proc3 = multiprocessing.Process(target = godMode)
 
 	proc1.start()
 	proc2.start()
-	# proc3.start()
+	proc3.start()
 
-	# proc1.join()
-	# proc2.join()
+	proc1.join()
+	proc2.join()
+	proc3.join()
 
 
 	

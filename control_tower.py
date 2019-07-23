@@ -185,7 +185,9 @@ class ControlTower(object):
 									# Let's drive ourselves
 									self.ctrLED.off()
 									self.connLED.off()
+									event.type = pygame.QUIT
 									driveTheSelf.main(motorInstrs, servoInstrs) # No manual control. Can only shut down
+
 						
 
 							elif(event.button == 0): # Shutdown everything
